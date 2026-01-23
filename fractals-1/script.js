@@ -7,7 +7,7 @@ canvas.width = size
 ctx.strokeStyle = '#ffd700'
 ctx.lineWidth = 10
 
-const sides = 5
+const sides = 10
 
 function drawFractal() {
   ctx.save()
@@ -29,14 +29,22 @@ function drawBranch(level) {
   ctx.lineTo(branchSize, 0)
   ctx.stroke()
 
-  for (let i = 0; i < 2; i++) {
-    ctx.save()
-    ctx.translate(branchSize, 0)
-    ctx.scale(0.7, 0.7)
-    ctx.rotate(-1.5 * Math.random())
-    drawBranch(level + 1)
-    ctx.restore()
-  }
+  ctx.save()
+
+  ctx.translate(branchSize, 0)
+  ctx.scale(0.7, 0.7)
+
+  ctx.save()
+  ctx.rotate(0.8)
+  drawBranch(level + 1)
+  ctx.restore()
+
+  ctx.save()
+  ctx.rotate(-0.8)
+  drawBranch(level + 1)
+  ctx.restore()
+
+  ctx.restore()
 }
 
 drawFractal()
