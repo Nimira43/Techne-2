@@ -13,7 +13,6 @@ function drawFractal() {
   const maxLevel = 7
   const spread = Math.random() * 2 -0.5
   
-  ctx.clearRect(0, 0, size, size)
   ctx.save()
   ctx.translate(size / 2, size / 2)
 
