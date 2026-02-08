@@ -5,50 +5,44 @@ const regenerateBtn = document.getElementById('regenerateBtn')
 const size = 600
 canvas.height = size
 canvas.width = size
-ctx.lineCap = 'round'
-ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-ctx.shadowBlur = 10
-ctx.shadowOffsetX = 3
-ctx.shadowOffsetY = 3
+ctx.strokeStyle = '#ffd700'
+ctx.lineWidth = 2
 
 function drawFractal() {
-  const lineWidth = Math.floor(Math.random() * 11) + 4
-  const hue = Math.random() * 360
   const sides = 5
-  const maxLevel = 6
-  const spread = Math.random() * 4 - 2
-  const scale = Math.random() * 0.1 + 0.6
-  const branches = Math.floor(Math.random() * 2) + 2
+  const maxLevel = 7
+  const spread = Math.random() * 2 - 0.5
+  const scale = Math.random() * 0.15 + 0.65
+  const branches = 3
   
   ctx.clearRect(0, 0, size, size)
-  ctx.lineWidth = lineWidth
   ctx.save()
   ctx.translate(size / 2, size / 2)
 
   for (let i = 0; i < sides; i++) {
-    drawBranch(0, maxLevel, spread, scale, branches, hue)
+    drawBranch(0, maxLevel, spread, scale, branches)
     ctx.rotate(Math.PI * 2 / sides)
   }
   ctx.restore()
 }
   
-function drawBranch(level, maxLevel, spread, scale, branches, hue) {
+function drawBranch(level, maxLevel, spread, scale, branches) {
   if (level > maxLevel) return
-  const branchSize = 110
-  const lightness = 10 + level * 10
-  ctx.strokeStyle = `hsl(${hue}, 100%, ${lightness}%)`
+
+  const branchSize = 100
   ctx.beginPath()
   ctx.moveTo(0, 0)
   ctx.lineTo(branchSize, 0)
   ctx.stroke()
 
   for (let i = 0; i < branches; i++) {
-    const position = branchSize - (branchSize / branches) * i
+    // make changes to formula in (brackets)
+    const position = branchSize - (branchSize / branches * 2 / 0.5) * i
     ctx.save()
     ctx.translate(position, 0)
     ctx.scale(scale, scale)
     ctx.rotate(spread)
-    drawBranch(level + 1, maxLevel, spread, scale, branches, hue)
+    drawBranch(level + 1, maxLevel, spread, scale, branches)
     ctx.restore()
   }
 }
