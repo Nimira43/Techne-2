@@ -11,8 +11,6 @@ ctx.shadowBlur = 10
 ctx.shadowOffsetX = 3
 ctx.shadowOffsetY = 3
 
-class Fractal {}
-
 function drawFractal() {
   const lineWidth = Math.floor(Math.random() * 11) + 4
   const hue = Math.random() * 360

@@ -11,16 +11,14 @@ ctx.shadowBlur = 10
 ctx.shadowOffsetX = 3
 ctx.shadowOffsetY = 3
 
-class Fractal {}
-
 function drawFractal() {
   const lineWidth = Math.floor(Math.random() * 11) + 4
   const hue = Math.random() * 360
-  const sides = Math.floor(Math.random() * 6) + 2
+  const sides = Math.floor(Math.random() * 7) + 2
   const maxLevel = 5
   const spread = Math.random() * 0.5 + 0.4
   const scale = Math.random() * 0.1 + 0.7
-  const branches = 4
+  const branches = 5
   
   ctx.clearRect(0, 0, size, size)
   ctx.lineWidth = lineWidth
@@ -49,7 +47,7 @@ function drawBranch(level, maxLevel, spread, scale, branches, hue) {
     ctx.save()
     ctx.translate(position, 0)
     ctx.scale(scale, scale)
-    ctx.rotate(spread * 2.1 * i / branches - spread * 0.95)
+    ctx.rotate(spread * 2 * i / branches - spread)
     drawBranch(level + 1, maxLevel, spread, scale, branches, hue)
     ctx.restore()
   }
