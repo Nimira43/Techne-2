@@ -8,12 +8,12 @@ class Fractal {
   constructor(drawMode) {
     this.lineWidth = Math.floor(Math.random() * 11) + 4
     this.hue = Math.random() * 360
-    this.sides = Math.floor(Math.random() * 6) + 2
+    this.sides = Math.floor(Math.random() * 6) + 4
     this.maxLevel = 5
-    this.spread = Math.random() * 0.5 + 0.4
-    this.scale = Math.random() * 0.1 + 0.7
+    this.spread = Math.random() * 0.7 + 0.4
+    this.scale = Math.random() * 0.1 + 0.8
     this.branches = 3
-    this.branchSize = 150
+    this.branchSize = 89
     this.drawMode = drawMode
   }
 
@@ -23,7 +23,7 @@ class Fractal {
     ctx.translate(canvas.width / 2, canvas.height / 2)
     for (let i = 0; i < this.sides; i++) {
       this.drawBranch(ctx, 0)
-      ctx.rotate(Math.PI * 2 / this.sides)
+      ctx.rotate(Math.PI * 4 / this.sides)
     }
     ctx.restore()
   }
@@ -31,33 +31,33 @@ class Fractal {
   drawBranch(ctx, level) {
     if (level > this.maxLevel) return
     
-    const lightness = 10 + level * 10
+    const lightness = 14 + level * 10
     
     if (this.drawMode === 'branches') {
       ctx.strokeStyle = `hsl(${this.hue}, 100%, ${lightness}%)`
       ctx.beginPath()
-      ctx.moveTo(0, 0)
+      ctx.moveTo(0, 1)
       ctx.lineTo(this.branchSize, 0)
       ctx.stroke()
     }
     
     else if (this.drawMode === 'circles') {
-      ctx.fillStyle = `hsl(${this.hue + 10 }, 100%, ${lightness + 5}%)`
+      ctx.fillStyle = `hsl(${this.hue + 70 }, 100%, ${lightness + 85}%)`
       ctx.beginPath()  
       ctx.arc(this.branchSize, 0, this.lineWidth * 1.5, 0, Math.PI * 2)
       ctx.fill()
     }
 
     else if (this.drawMode === 'sparks') {
-      if (level > this.maxLevel - 4 && Math.random() < 0.1) {
+      if (level > this.maxLevel - 7 && Math.random() < 0.1) {
         ctx.fillStyle = `hsl(${this.hue + 10}, 100%, ${lightness + 20}%)`
         ctx.globalAlpha = 0.6
         for (let i = 0; i < 5; i++) {
           ctx.save()
           ctx.translate(250, 150)
-          ctx.rotate((Math.PI * 2 / 5) * i)
+          ctx.rotate((Math.PI * 2 / 8) * i)
           ctx.beginPath()
-          ctx.ellipse(0, 8, 4, 50, 0, 0, Math.PI * 2)
+          ctx.ellipse(0, 8, 4, 150, 3, 10, Math.PI * 2)
           ctx.fill()
           ctx.restore()
         }

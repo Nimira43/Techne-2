@@ -3,13 +3,7 @@ const ctx = canvas.getContext('2d')
 const regenerateBtn = document.getElementById('regenerateBtn')
 
 const size = 700
-canvas.height = size
-canvas.width = size
-ctx.lineCap = 'round'
-ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-ctx.shadowBlur = 10
-ctx.shadowOffsetX = 3
-ctx.shadowOffsetY = 3
+
 
 class Fractal {
   constructor() {
@@ -19,15 +13,15 @@ class Fractal {
     this.maxLevel = 5
     this.spread = Math.random() * 0.5 + 0.4
     this.scale = Math.random() * 0.1 + 0.7
-    this.branches = 4
-    this.branchSize = 110
+    this.branches = 3
+    this.branchSize = 150
   }
 
   draw(ctx) {
-    ctx.clearRect(0, 0, size, size)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.lineWidth = this.lineWidth
     ctx.save()
-    ctx.translate(size / 2, size / 2)
+    ctx.translate(canvas.width / 2, canvas.height / 2)
     for (let i = 0; i < this.sides; i++) {
       this.drawBranch(ctx, 0)
       ctx.rotate(Math.PI * 2 / this.sides)
@@ -62,5 +56,19 @@ function drawFractal() {
   fractal.draw(ctx)
 }
 
-drawFractal()
 regenerateBtn.addEventListener('click', drawFractal)
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  ctx.lineCap = 'round'
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+  ctx.shadowBlur = 10
+  ctx.shadowOffsetX = 3
+  ctx.shadowOffsetY = 3
+
+  drawFractal()
+}
+
+window.addEventListener('resize', resizeCanvas)
+resizeCanvas()

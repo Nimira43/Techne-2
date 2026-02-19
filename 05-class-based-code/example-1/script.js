@@ -3,31 +3,24 @@ const ctx = canvas.getContext('2d')
 const regenerateBtn = document.getElementById('regenerateBtn')
 
 const size = 700
-canvas.height = size
-canvas.width = size
-ctx.lineCap = 'round'
-ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-ctx.shadowBlur = 10
-ctx.shadowOffsetX = 3
-ctx.shadowOffsetY = 3
 
 class Fractal {
-  constructor() {
+  constructor(drawMode) {
     this.lineWidth = Math.floor(Math.random() * 11) + 4
     this.hue = Math.random() * 360
     this.sides = Math.floor(Math.random() * 6) + 2
     this.maxLevel = 5
     this.spread = Math.random() * 0.5 + 0.4
     this.scale = Math.random() * 0.1 + 0.7
-    this.branches = 4
-    this.branchSize = 110
+    this.branches = 3
+    this.branchSize = 150
+    this.drawMode = drawMode
   }
 
   draw(ctx) {
-    ctx.clearRect(0, 0, size, size)
     ctx.lineWidth = this.lineWidth
     ctx.save()
-    ctx.translate(size / 2, size / 2)
+    ctx.translate(canvas.width / 2, canvas.height / 2)
     for (let i = 0; i < this.sides; i++) {
       this.drawBranch(ctx, 0)
       ctx.rotate(Math.PI * 2 / this.sides)
@@ -39,12 +32,22 @@ class Fractal {
     if (level > this.maxLevel) return
     
     const lightness = 10 + level * 10
-    ctx.strokeStyle = `hsl(${this.hue}, 100%, ${lightness}%)`
-    ctx.beginPath()
-    ctx.moveTo(0, 0)
-    ctx.lineTo(this.branchSize, 0)
-    ctx.stroke()
-
+    
+    if (this.drawMode === 'branches') {
+      ctx.strokeStyle = `hsl(${this.hue}, 100%, ${lightness}%)`
+      ctx.beginPath()
+      ctx.moveTo(0, 0)
+      ctx.lineTo(this.branchSize, 0)
+      ctx.stroke()
+    }
+    
+    else if (this.drawMode === 'circles') {
+      ctx.fillStyle = `hsl(${this.hue + 10 }, 100%, ${lightness - 10}%)`
+      ctx.beginPath()  
+      ctx.arc(this.branchSize * 2, -50, this.lineWidth * 2, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    
     for (let i = 0; i < this.branches; i++) {
       const position = this.branchSize - (this.branchSize / this.branches) * i
       ctx.save()
@@ -58,9 +61,26 @@ class Fractal {
 }
 
 function drawFractal() {
-  const fractal = new Fractal()
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  const fractal = new Fractal('branches')
+  fractal.draw(ctx)
+  fractal.drawMode = 'circles'
   fractal.draw(ctx)
 }
 
-drawFractal()
 regenerateBtn.addEventListener('click', drawFractal)
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  ctx.lineCap = 'round'
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+  ctx.shadowBlur = 10
+  ctx.shadowOffsetX = 3
+  ctx.shadowOffsetY = 3
+
+  drawFractal()
+}
+
+window.addEventListener('resize', resizeCanvas)
+resizeCanvas()
