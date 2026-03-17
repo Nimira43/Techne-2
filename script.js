@@ -8,23 +8,74 @@ class Fractal {
   constructor(drawMode) {
     this.lineWidth = Math.floor(Math.random() * 11) + 4
     this.hue = Math.random() * 360
-    this.sides = Math.floor(Math.random() * 6) + 2
+    this.sides = 6    
     this.maxLevel = 5
-    this.spread = Math.random() * 0.5 + 0.4
+    this.spread = 0.6
     this.scale = Math.random() * 0.1 + 0.7
     this.branches = 4
     this.branchSize = 150
     this.drawMode = drawMode
+
+    this.antennaAngle = Math.random() * 0.1 + 0.4
+    this.bodySize = Math.random() * 20 + 10
+    this.upperWingAngle = Math.random() * 0.4 + 1.2
   }
 
   draw(ctx) {
     ctx.lineWidth = this.lineWidth
     ctx.save()
     ctx.translate(canvas.width / 2, canvas.height / 2)
-    for (let i = 0; i < this.sides; i++) {
-      this.drawBranch(ctx, 0)
-      ctx.rotate(Math.PI * 2 / this.sides)
+    
+    // for (let i = 0; i < this.sides; i++) {
+    //   this.drawBranch(ctx, 0)
+    //   ctx.rotate(Math.PI * 2 / this.sides)
+    // }
+
+    ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`
+    const numCircles = this.bodySize
+    const bodyLength = this.branchSize
+    const spacing = bodyLength / (numCircles - 1)
+
+    for (let i = numCircles - 1; i > 0; i--) {
+      const y = i * spacing - bodyLength / 2
+      const progress = i / (numCircles - 1)
+      const sizeMultiplier = Math.sin(progress * Math.PI)
+      const radius = this.bodySize * (0.3 + sizeMultiplier)
+      ctx.beginPath()
+      ctx.arc(0, y, radius, 0, Math.PI * 2)
+      ctx.fill()
     }
+
+    ctx.save()
+    ctx.translate(-this.bodySize / 2, -60)
+    ctx.rotate(-Math.PI / 2 - this.antennaAngle)
+    ctx.scale(0.8, -0.7)
+    this.drawBranch(ctx, this.maxLevel - 2)
+    ctx.restore()
+    
+    ctx.save()
+    ctx.translate(this.bodySize / 2, -60)
+    ctx.rotate(-Math.PI / 2 + this.antennaAngle)
+    ctx.scale(0.8, 0.7)
+    this.drawBranch(ctx, this.maxLevel - 2)
+    ctx.restore()
+    
+    ctx.save()
+    ctx.translate(-this.bodySize, 0)
+    ctx.rotate(-Math.PI / 2 - this.upperWingAngle)
+    ctx.scale(1.2, 1.2)
+    this.drawBranch(ctx, 0)
+    ctx.restore()
+    
+    ctx.save()
+    ctx.translate(this.bodySize, 0)
+    ctx.rotate(-Math.PI / 2 + this.upperWingAngle)
+    ctx.scale(1.2, -1.2)
+    this.drawBranch(ctx, 0)
+    ctx.restore()
+
+
+
     ctx.restore()
   }
 
@@ -194,22 +245,22 @@ function drawFractal() {
   // const fractal = new Fractal('electricity')
   const fractal = new Fractal('branches')
   fractal.draw(ctx)
-  // fractal.drawMode = 'circles'
-  // fractal.draw(ctx)
-  fractal.drawMode = 'electricity'
+  fractal.drawMode = 'circles'
   fractal.draw(ctx)
+  // fractal.drawMode = 'electricity'
+  // fractal.draw(ctx)
   // fractal.drawMode = 'runes'
   // fractal.draw(ctx)
-  fractal.drawMode = 'droplets'
-  fractal.draw(ctx)
-  fractal.drawMode = 'fur'
-  fractal.draw(ctx)
-  fractal.drawMode = 'flames'
-  fractal.draw(ctx)
-  fractal.drawMode = 'minerals'
-  fractal.draw(ctx)
-  fractal.drawMode = 'sparks'
-  fractal.draw(ctx)
+  // fractal.drawMode = 'droplets'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'fur'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'flames'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'minerals'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'sparks'
+  // fractal.draw(ctx)
 }
 
 regenerateBtn.addEventListener('click', drawFractal)
@@ -219,7 +270,7 @@ function resizeCanvas() {
   canvas.height = window.innerHeight
   ctx.lineCap = 'round'
   ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-  ctx.shadowBlur = 10
+  ctx.shadowBlur = 20
   ctx.shadowOffsetX = 3
   ctx.shadowOffsetY = 3
 
