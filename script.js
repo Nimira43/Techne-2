@@ -35,7 +35,7 @@ class Fractal {
     for (let i = numCircles - 1; i > 0; i--) {
       const y = i * spacing - bodyLength / 2
       const progress = i / (numCircles - 1)
-      const sizeMultiplier = Math.sin(progress * Math.PI) * Math.random() * 0.5 + 0.7
+      const sizeMultiplier = Math.sin(progress * Math.PI) * (Math.random() * 0.5 + 0.7)
       const radius = this.bodySize * (0.3 + sizeMultiplier)
       ctx.beginPath()
       ctx.arc(0, y, radius, 0, Math.PI * 2)
@@ -93,14 +93,16 @@ class Fractal {
     const lightness = 10 + level * 10
     
     if (this.drawMode === 'branches') {
-      ctx.save()
-      ctx.strokeStyle = `hsl(0, 100%, 35%)`
-      ctx.lineWidth = this.lineWidth * 1.5
-      ctx.beginPath()
-      ctx.moveTo(0, 0)
-      ctx.lineTo(this.branchSize, 0)
-      ctx.stroke()
-      ctx.restore()
+      if (level < this.maxLevel - 1) {
+        ctx.save()
+        ctx.strokeStyle = `hsl(0, 100%, 35%)`
+        ctx.lineWidth = this.lineWidth * 1.5
+        ctx.beginPath()
+        ctx.moveTo(0, 0)
+        ctx.lineTo(this.branchSize, 0)
+        ctx.stroke()
+        ctx.restore()
+      }
     }
     
     else if (this.drawMode === 'circles') {
@@ -253,6 +255,21 @@ class Fractal {
         ctx.restore()
       }
     }
+
+    else if (this.drawMode === 'veins') {
+      if (level < this.maxLevel) {
+        ctx.strokeStyle = `hsl(0, 100%, 20%)`
+        ctx.lineWidth = 4
+        ctx.beginPath()
+        ctx.moveTo(0, 0)
+        const cp1x = this.branchSize * 0.33
+        const cp1y = (Math.random() - 0.5) * 80
+        const cp2x = this.branchSize * 0.66
+        const cp2y = (Math.random() - 0.5) * 80
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, this.branchSize, 0)
+        ctx.stroke()
+      }
+    }
     
     for (let i = 0; i < this.branches; i++) {
       const position = this.branchSize - (this.branchSize / this.branches) * i
@@ -273,6 +290,8 @@ function drawFractal() {
   const fractal = new Fractal('glow')
   fractal.draw(ctx)
   fractal.drawMode = 'branches'
+  fractal.draw(ctx)
+  fractal.drawMode = 'veins'
   fractal.draw(ctx)
   
   // fractal.drawMode = 'electricity'
@@ -299,7 +318,7 @@ function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   ctx.lineCap = 'round'
-  ctx.shadowColor = 'hsla(0, 100%, 10%, 0.5)'
+  ctx.shadowColor = 'hsla(0, 100%, 10%, 0.2)'
   ctx.shadowBlur = 20
   ctx.shadowOffsetX = 3
   ctx.shadowOffsetY = 3
