@@ -10,16 +10,16 @@ class Fractal {
     this.hue = Math.random() * 360
     this.sides = 6    
     this.maxLevel = 5
-    this.spread = Math.random() * 0.3 + 0.3
+    this.spread = 0.6
     this.scale = Math.random() * 0.1 + 0.7
     this.branches = 4
-    this.branchSize = 160
+    this.branchSize = 150
     this.drawMode = drawMode
 
-    this.antennaAngle = Math.random() * 0.2 + 0.2
+    this.antennaAngle = Math.random() * 0.2 + 0.4
     this.bodySize = Math.random() * 20 + 10
-    this.upperWingAngle = Math.random() * 0.4 + 1
-    this.lowerWingAngle = Math.random() * 0.3 + 2.1
+    this.upperWingAngle = Math.random() * 0.4 + 1.2
+    this.lowerWingAngle = Math.random() * 0.3 + 1.9
   }
 
   draw(ctx) {
@@ -71,14 +71,14 @@ class Fractal {
     ctx.restore()
     
     ctx.save()
-    ctx.translate(-this.bodySize, 0)
+    ctx.translate(this.bodySize, 0)
     ctx.rotate(-Math.PI / 2 - this.lowerWingAngle)
     ctx.scale(0.7, 0.8)
     this.drawBranch(ctx, 0)
     ctx.restore()
     
     ctx.save()
-    ctx.translate(this.bodySize, 0)
+    ctx.translate(-this.bodySize, 0)
     ctx.rotate(-Math.PI / 2 + this.lowerWingAngle)
     ctx.scale(0.7, -0.8)
     this.drawBranch(ctx, 0)
@@ -95,7 +95,7 @@ class Fractal {
     if (this.drawMode === 'branches') {
       if (level < this.maxLevel - 1) {
         ctx.save()
-        ctx.strokeStyle = `hsl(0, 100%, 32%)`
+        ctx.strokeStyle = `hsl(0, 100%, 35%)`
         ctx.lineWidth = this.lineWidth * 1.5
         ctx.beginPath()
         ctx.moveTo(0, 0)
@@ -150,6 +150,97 @@ class Fractal {
       }
     }
 
+    else if (this.drawMode === 'runes') {
+      if (level < this.maxLevel - 1) {
+        ctx.fillStyle = `hsl(${this.hue + 15}, 100%, ${lightness + 30}%)`
+        ctx.globalAlpha = 0.5
+        ctx.font = '40px monospace'
+        const runeSymbols = [
+           'ᚨ', '◊', 'ᚱ', 'ᛇ', 'ᛗ', '✦', 'ᚹ', 'ᚺ', '⁂','ᛉ', 'ᚠ', 'ᚢ', '※', 'ᚦ', "ᛃ", "ᛈ"]
+        const randomRune = runeSymbols[
+          Math.floor(
+            Math.random() * runeSymbols.length
+          )
+        ]
+        ctx.fillText(randomRune, this.branchSize * (level + 1) * 0.5, this.branchSize * (level + 1) * -0.2)
+        ctx.globalAlpha = 1
+      }
+    }
+
+    else if (this.drawMode === 'droplets') {
+      ctx.fillStyle = `hsl(${this.hue + 20}, 100%, ${lightness + 10}%)`
+      ctx.save()
+      ctx.translate(this.branchSize, 0)
+      ctx.globalAlpha = 0.85
+      ctx.beginPath()
+      ctx.arc(0, 0, this.lineWidth * 1.5, 0, Math.PI * 2)
+      ctx.fill()
+      
+      if (level < this.maxLevel - 2) {
+        ctx.lineWidth = 0.5
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)'
+        ctx.stroke()
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
+        ctx.beginPath()
+        ctx.arc(-this.lineWidth * 0.3, this.lineWidth * 0.5, this.lineWidth * 0.6, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.restore()
+    }
+    
+    else if (this.drawMode === 'fur') {
+      if (level > 3) {
+        ctx.fillStyle = `hsl(${this.hue - 5}, 100%, ${lightness - 10}%)`
+        ctx.save()
+        ctx.translate(0, 50)
+        ctx.fillRect(0, 0, 2, 110)
+        ctx.restore()
+      }
+    }
+
+    else if (this.drawMode === 'minerals') {
+      if (level > 1 && Math.random() < 0.1) {
+        ctx.fillStyle = `hsl(${this.hue + 10}, 100%, ${lightness - 5}%)`
+        ctx.strokeStyle = `hsl(${this.hue - 10}, 100%, ${lightness + 40}%)`
+        ctx.save()
+        ctx.translate(this.branchSize, 0)
+        ctx.rotate(Math.random() * Math.PI * 2)
+        const size = 10 + Math.random() * 70
+        ctx.lineWidth = 3
+        ctx.globalAlpha = 0.8
+        ctx.beginPath()
+        ctx.moveTo(0, -size)
+        ctx.lineTo(size * 0.5, -size * 0.3)
+        ctx.lineTo(size, 0)
+        ctx.lineTo(size * 0.5, size * 0.5)
+        ctx.lineTo(0, size * 0.7)
+        ctx.lineTo(-size * 0.5, size * 0.5)
+        ctx.lineTo(-size, 0)
+        ctx.lineTo(-size * 0.5, -size * 0.3)
+        ctx.fill()
+        ctx.stroke()
+        ctx.restore()
+      }
+    }
+
+    else if (this.drawMode === 'flames') {
+      if (level > 2 && level < this.maxLevel) {
+        const fireColour = `hsl(${30 + Math.random() * 30}, 100%, ${60 + Math.random() * 20}%)`
+        ctx.fillStyle = fireColour
+        ctx.save()
+        ctx.globalAlpha = 0.1
+        ctx.shadowColor = fireColour
+        ctx.shadowBlur = 8        
+        ctx.beginPath()
+        ctx.moveTo(this.branchSize, 200)
+        ctx.lineTo(this.branchSize - 200, Math.random() * 300 + 200)
+        ctx.lineTo(this.branchSize + Math.random() * 150 - 20, Math.random() * 50)
+        ctx.lineTo(this.branchSize + 10, 100)        
+        ctx.fill()
+        ctx.restore()
+      }
+    } 
+
     else if (this.drawMode === 'glow') {
       if (level < this.maxLevel) {
         ctx.save()
@@ -159,7 +250,7 @@ class Fractal {
         ctx.shadowBlur = 60
         ctx.beginPath()
         ctx.moveTo(0, 0)
-        ctx.quadraticCurveTo(this.branchSize * 0.5, Math.random() * 80 - 40, this.branchSize * 1.5, 0)
+        ctx.quadraticCurveTo(this.branchSize * 0.5, 0, this.branchSize * 1.5, 0)
         ctx.stroke()
         ctx.restore()
       }
@@ -177,48 +268,6 @@ class Fractal {
         const cp2y = (Math.random() - 0.5) * 80
         ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, this.branchSize, 0)
         ctx.stroke()
-      }
-    }
-
-    else if (this.drawMode === 'tendrils') {
-      ctx.save()
-
-      if (level < this.maxLevel && level > 2 && Math.random() < 0.25) {
-        ctx.strokeStyle = `hsl(0, 100%, 20%)`
-        ctx.lineWidth = this.lineWidth
-        ctx.shadowColor = `hsla(0, 100%, 50%, 0.6)`
-        ctx.shadowBlur = 20
-        ctx.beginPath()
-        ctx.moveTo(0, 0)
-        const length = this.branchSize * 4
-        const segments = 20
-        const waveFreq = 2
-        const waveAmp = 40
-
-        for (let i = 1; i <= segments; i++) {
-          const t = i / segments
-          const x = length * t
-          const y = Math.sin(t * Math.PI * waveFreq) * waveAmp
-          ctx.lineTo(x, y)
-        }
-        ctx.stroke()
-        ctx.strokeStyle = `rgba(255, 255, 255, 0.2)`
-        ctx.lineWidth = this.lineWidth * 0.3
-        ctx.stroke()
-      }
-      ctx.restore()
-    }
-
-    else if (this.drawMode === 'spores') {
-      if (level > 1 && level < this.maxLevel && Math.random() < 0.5) {
-        ctx.save()
-        ctx.fillStyle = `hsl(0, 100%, 15%)`
-        ctx.shadowColor = `hsla(0, 100%, 55%, 0.8)`
-        ctx.shadowBlur = 20
-        ctx.beginPath()
-        ctx.arc(this.branchSize + Math.random() * this.branchSize * 4, 0, Math.random() * 10 + 2, 0, Math.PI * 2) 
-        ctx.fill()
-        ctx.restore()
       }
     }
     
@@ -244,14 +293,20 @@ function drawFractal() {
   fractal.draw(ctx)
   fractal.drawMode = 'veins'
   fractal.draw(ctx)
-  fractal.drawMode = 'tendrils'
-  fractal.draw(ctx)
-  fractal.drawMode = 'spores'
-  fractal.draw(ctx)
   
   // fractal.drawMode = 'electricity'
   // fractal.draw(ctx)
   // fractal.drawMode = 'circles'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'runes'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'droplets'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'fur'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'flames'
+  // fractal.draw(ctx)
+  // fractal.drawMode = 'minerals'
   // fractal.draw(ctx)
   // fractal.drawMode = 'sparks'
   // fractal.draw(ctx)
@@ -263,7 +318,7 @@ function resizeCanvas() {
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   ctx.lineCap = 'round'
-  ctx.shadowColor = 'hsla(0, 100%, 10%, 0.3)'
+  ctx.shadowColor = 'hsla(0, 100%, 10%, 0.2)'
   ctx.shadowBlur = 20
   ctx.shadowOffsetX = 3
   ctx.shadowOffsetY = 3

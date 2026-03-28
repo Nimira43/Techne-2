@@ -1,1 +1,0 @@
-Uses the fractals here to test out different settings
